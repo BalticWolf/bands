@@ -6,7 +6,13 @@ import pandas as pd
 
 
 def main():
-    rym = pd.read_csv('./data/rym_extract', encoding='utf-8')
+    make_url_file('./data/rym_extract')
+    with open('./data/urls', 'r') as f:
+        f.readline()
+
+
+def make_url_file(path):
+    rym = pd.read_csv(path, encoding='utf-8')
     rym.columns = rym.columns.map(lambda x: x.strip(' '))
     rym = rym.iloc[:, 1:3]
     rym['First Name'] = rym['First Name'].apply(str)
