@@ -3,6 +3,7 @@
 
 
 import pandas as pd
+from DbConnection import NeoDb
 from Band import Band
 
 
@@ -10,7 +11,9 @@ def main():
     # make_url_file('./data/rym_extract')
     # with open('./data/urls', 'r') as f:
     #     f.readline()
-    for band in Band.get_all():
+    neo = NeoDb("bolt://127.0.0.1:7687", "neo4j", "bands")
+    session = neo.get_session()
+    for band in Band.get_all(session):
         print(band["name"])
 
 
