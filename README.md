@@ -1,0 +1,2 @@
+This project is personal and uses Neo4j with Python.
+The goal is to get some insights about how band members contributed in each band, based on my RYM collection (https://rateyourmusic.com/~BalticWolf)
