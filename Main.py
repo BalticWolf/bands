@@ -3,12 +3,15 @@
 
 
 import pandas as pd
+from Band import Band
 
 
 def main():
-    make_url_file('./data/rym_extract')
-    with open('./data/urls', 'r') as f:
-        f.readline()
+    # make_url_file('./data/rym_extract')
+    # with open('./data/urls', 'r') as f:
+    #     f.readline()
+    for band in Band.get_all():
+        print(band["name"])
 
 
 def make_url_file(path):
