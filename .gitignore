@@ -2,3 +2,4 @@
 .DS_Store
 .spyproject
 data
+__pycache__
