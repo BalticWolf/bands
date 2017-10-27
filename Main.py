@@ -11,10 +11,14 @@ def main():
     # make_url_file('./data/rym_extract')
     # with open('./data/urls', 'r') as f:
     #     f.readline()
-    neo = NeoDb("bolt://127.0.0.1:7687", "neo4j", "bands")
-    session = neo.get_session()
-    for band in Band.get_all(session):
-        print(band["name"])
+    # neo = NeoDb("bolt://127.0.0.1:7687", "neo4j", "bands")
+    # session = neo.get_session()
+    # for band in Band.get_all(session):
+    #     print(band["name"])
+
+    name, info = get_info_from_url('./data/site_rip/A Perfect Circle - Sonemic _ Rate Your Music music database.html')
+    print(name)
+    print(info)
 
 
 def make_url_file(path):
@@ -58,6 +62,17 @@ def make_url(band_name):
         .replace('ü', 'u')
 
     return base_url + name
+
+
+def get_info_from_url(link):
+    with open(link) as f:
+        page = f.read()
+
+    name = page[page.find("""<div class="artist_page_name">"""):
+                page.find("""<div class="artist_page_genres">""")]
+    info = page[page.find("""<div class="artist_page_info">"""):
+                page.find("""<div class="artist_page_info_hdr">""")]
+    return name, info
 
 
 if __name__ == '__main__':
