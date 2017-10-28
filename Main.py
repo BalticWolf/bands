@@ -3,6 +3,7 @@
 
 
 import pandas as pd
+from pyquery import PyQuery
 from DbConnection import NeoDb
 from Band import Band
 
@@ -16,9 +17,8 @@ def main():
     # for band in Band.get_all(session):
     #     print(band["name"])
 
-    name, info = get_info_from_url('./data/site_rip/A Perfect Circle - Sonemic _ Rate Your Music music database.html')
-    print(name)
-    print(info)
+    band = get_info_from_url('./data/pages/The Smashing Pumpkins - Sonemic _ Rate Your Music music database.html')
+    print(band)
 
 
 def make_url_file(path):
@@ -65,14 +65,29 @@ def make_url(band_name):
 
 
 def get_info_from_url(link):
-    with open(link) as f:
-        page = f.read()
+    page = PyQuery(filename=link)
 
-    name = page[page.find("""<div class="artist_page_name">"""):
-                page.find("""<div class="artist_page_genres">""")]
-    info = page[page.find("""<div class="artist_page_info">"""):
-                page.find("""<div class="artist_page_info_hdr">""")]
-    return name, info
+    # extract band name
+    name = page('div.artist_page_name h1').text()
+
+    # extract band information
+    info = page('div.artist_page_info')
+
+    # extract list of headers within band information section
+    headers = [header.text for header in info('div.artist_page_info_hdr')]
+
+    # information is structured in 2 different ways
+    data1 = [item.text for item in info('div.artist_page_info_data')]
+    data2 = [item.text() for item in info('div.artist_page_info_data').items('p')]
+
+    # gather information: replace trailing None values of elts1 by elts2
+    items = data1[:-len(data2)] + data2
+
+    # create key-value pairs
+    band = dict(list(zip(headers, items)))
+    band['Name'] = name
+
+    return band
 
 
 if __name__ == '__main__':
