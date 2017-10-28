@@ -3,6 +3,7 @@
 
 
 import pandas as pd
+import re
 from pyquery import PyQuery
 from DbConnection import NeoDb
 from Band import Band
@@ -17,7 +18,7 @@ def main():
     # for band in Band.get_all(session):
     #     print(band["name"])
 
-    band = get_info_from_url('./data/pages/The Smashing Pumpkins - Sonemic _ Rate Your Music music database.html')
+    band = get_info_from_url('./data/pages/Black Sabbath - Sonemic _ Rate Your Music music database.html')
     print(band)
 
 
@@ -87,7 +88,38 @@ def get_info_from_url(link):
     band = dict(list(zip(headers, items)))
     band['Name'] = name
 
+    # clean data
+    for key in ['Formed', 'Disbanded']:
+        try:
+            band[key] = band[key].strip(' ').strip(',')
+        except TypeError:
+            pass
+
+    band['Members'] = to_dict_list(band['Members'])
+
     return band
+
+
+def to_dict_list(raw_members):
+    keys = ['Name', 'Instruments', 'Periods']
+
+    # get a list of band members, ignoring the last parenthesis of raw_members
+    members = raw_members[:-1].split('), ')
+
+    # separate member name from other features
+    members = [member.replace(' (', '|') for member in members]
+
+    # separate instruments from active periods
+    members = [re.sub(', (?=\d)', '|', member, 1) for member in members]
+
+    # split member features
+    members = [member.split('|') for member in members]
+
+    # put instruments and active periods in lists
+    # members = [feature.split(', ') for member in members for feature in member]
+
+    print(members)
+    return members
 
 
 if __name__ == '__main__':
