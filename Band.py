@@ -13,3 +13,8 @@ class Band(object):
                                   "RETURN a.name AS name "
                                   "ORDER BY name")
         return results
+
+
+    @staticmethod
+    def insert(session, data):
+        return 'inserted band'
