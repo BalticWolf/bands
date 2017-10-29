@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 
-import pandas as pd
 import re
 from datetime import date
+
+import pandas as pd
 from pyquery import PyQuery
+
 from DbConnection import NeoDb
-from Band import Band
+from models.Band import Band
 
 
 def main():
