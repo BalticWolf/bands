@@ -116,7 +116,12 @@ def to_dict_list(raw_members):
     members = [member.split('|') for member in members]
 
     # put instruments and active periods in lists
-    # members = [feature.split(', ') for member in members for feature in member]
+    for member in members:
+        for i in list(range(1, len(member))):
+            member[i] = member[i].split(', ')
+
+    # transform members as list of dict
+    members = [dict(zip(keys, member)) for member in members]
 
     print(members)
     return members
