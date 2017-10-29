@@ -4,6 +4,7 @@
 
 import pandas as pd
 import re
+from datetime import date
 from pyquery import PyQuery
 from DbConnection import NeoDb
 from Band import Band
@@ -90,10 +91,8 @@ def get_info_from_url(link):
 
     # clean data
     for key in ['Formed', 'Disbanded']:
-        try:
+        if key in band:
             band[key] = band[key].strip(' ').strip(',')
-        except TypeError:
-            pass
 
     band['Members'] = to_dict_list(band['Members'])
 
@@ -115,16 +114,55 @@ def to_dict_list(raw_members):
     # split member features
     members = [member.split('|') for member in members]
 
-    # put instruments and active periods in lists
     for member in members:
+        # put instruments and active periods in lists
         for i in list(range(1, len(member))):
             member[i] = member[i].split(', ')
+
+            # transform periods in list of dict [{'start':, 'end':}]
+            if i == 2:
+                member[i] = transform_periods(member[i])
+
 
     # transform members as list of dict
     members = [dict(zip(keys, member)) for member in members]
 
     print(members)
     return members
+
+
+def transform_periods(raw_periods):
+    periods = raw_periods
+    for i in range(len(periods)):
+        periods[i] = transform_period(periods[i])
+
+    print(periods)
+    return periods
+
+
+def transform_period(raw_period):
+    limits = raw_period.split('-')
+
+    if len(limits) == 1:
+        period = {'Start': int(limits[0]), 'End': int(limits[0])}
+
+    if len(limits) == 2:
+        year = limits[1]
+        if year not in ['present', 'pres', 'pres.', 'current']:
+            year = int(year)
+
+            # force year to be written on 4 digits
+            if year < 100:
+                if year + 2000 > date.today().year:
+                    year = year + 1900
+                else:
+                    year = year + 2000
+            period = {'Start': int(limits[0]), 'End': year}
+
+        else:
+            period = {'Start': int(limits[0])}
+
+    return period
 
 
 if __name__ == '__main__':
