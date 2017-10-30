@@ -184,13 +184,19 @@ def transform_period(raw_period):
 
 
 def format_year(str_year):
+    """
+    :param str_year: string representing a year, on 2 or 4 digits
+    :return: an integer representing a year on 4 digits
+    """
     year = int(str_year)
 
     if year < 100:
-        # force year to be written on 4 digits
+        # 0 <= year <= 99
         if year + 2000 <= date.today().year:
+            # 2000 <= year + 2000 <= current year
             year += 2000
         else:
+            # year + 2000 > current year (
             year += 1900
 
     return year
