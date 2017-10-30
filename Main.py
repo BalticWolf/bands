@@ -159,36 +159,41 @@ def transform_period(raw_period):
     :param raw_period: string representing a period of activity of a band member
     :return: {'Start': ... , 'End': ... } or {'Start': ... } representing the activity period
     """
+    period = {}
     limits = raw_period.split('-')
 
     # No end date: the member started and stopped activity the same year
     if len(limits) == 1:
-        period = {'Start': int(limits[0]), 'End': int(limits[0])}
+        # the string is not empty
+        if len(limits[0]) > 0:
+            period = {'Start': int(limits[0]), 'End': int(limits[0])}
 
     # End date section specified
     elif len(limits) == 2:
         year = limits[1]
 
-        if year not in ['present', 'pres', 'pres.', 'current']:
-            # the period of activity is over
-            year = int(year)
-
-            # force year to be written on 4 digits
-            if year < 100:
-                if year + 2000 > date.today().year:
-                    year = year + 1900
-                else:
-                    year = year + 2000
-            period = {'Start': int(limits[0]), 'End': year}
-
-        else:
+        if year in ['present', 'pres', 'pres.', 'current']:
             # the member is still currently active
             period = {'Start': int(limits[0])}
 
-    else:
-        period = {}
+        else:
+            # the member is no longer active
+            period = {'Start': int(limits[0]), 'End': format_year(year)}
 
     return period
+
+
+def format_year(str_year):
+    year = int(str_year)
+
+    if year < 100:
+        # force year to be written on 4 digits
+        if year + 2000 <= date.today().year:
+            year += 2000
+        else:
+            year += 1900
+
+    return year
 
 
 if __name__ == '__main__':
