@@ -21,10 +21,11 @@ def main():
     # for band in Band.get_all(session):
     #     print(band["name"])
 
-    band = get_info_from_url('./data/pages/Tenacious D - Sonemic _ Rate Your Music music database.html')
-    print(band)
+    band_data = get_info_from_url('./data/pages/Tenacious D - Sonemic _ Rate Your Music music database.html')
+    print(band_data)
 
-    print(Band.insert(session, band))
+    band = Band(band_data)
+    band.insert(session)
 
 
 def make_url_file(path):
