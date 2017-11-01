@@ -21,7 +21,7 @@ def main():
     # for band in Band.get_all(session):
     #     print(band["name"])
 
-    band = get_info_from_url('./data/pages/Black Sabbath - Sonemic _ Rate Your Music music database.html')
+    band = get_info_from_url('./data/pages/Tenacious D - Sonemic _ Rate Your Music music database.html')
     print(band)
 
     print(Band.insert(session, band))
@@ -162,6 +162,24 @@ def transform_period(raw_period):
     period = {}
     limits = raw_period.split('-')
 
+    def format_year(str_year):
+        """
+        :param str_year: string representing a year, on 2 or 4 digits
+        :return: an integer representing a year on 4 digits
+        """
+        year = int(str_year)
+
+        if year < 100:
+            # 0 <= year <= 99
+            if year + 2000 <= date.today().year:
+                # 2000 <= year + 2000 <= current year
+                year += 2000
+            else:
+                # year + 2000 > current year (
+                year += 1900
+
+        return year
+
     # No end date: the member started and stopped activity the same year
     if len(limits) == 1:
         # the string is not empty
@@ -181,25 +199,6 @@ def transform_period(raw_period):
             period = {'Start': int(limits[0]), 'End': format_year(year)}
 
     return period
-
-
-def format_year(str_year):
-    """
-    :param str_year: string representing a year, on 2 or 4 digits
-    :return: an integer representing a year on 4 digits
-    """
-    year = int(str_year)
-
-    if year < 100:
-        # 0 <= year <= 99
-        if year + 2000 <= date.today().year:
-            # 2000 <= year + 2000 <= current year
-            year += 2000
-        else:
-            # year + 2000 > current year (
-            year += 1900
-
-    return year
 
 
 if __name__ == '__main__':
