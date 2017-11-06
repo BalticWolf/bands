@@ -16,7 +16,7 @@ class TestPeriod(unittest.TestCase):
         self.assertEqual(Main.transform_period('2001'), {'Start': 2001, 'End': 2001})
 
     def test03_present(self):
-        self.assertEqual(Main.transform_period('2005-present'), {'Start': 2005})
+        self.assertEqual(Main.transform_period('2005-present'), {'Start': 2005, 'End': ''})
 
     def test04_partial_1900(self):
         self.assertEqual(Main.transform_period('1992-95'), {'Start': 1992, 'End': 1995})
@@ -26,6 +26,11 @@ class TestPeriod(unittest.TestCase):
 
     def test06_complete_dates(self):
         self.assertEqual(Main.transform_period('1999-2004'), {'Start': 1999, 'End': 2004})
+
+
+class TestPeriods(unittest.TestCase):
+    def test00_empty(self):
+        self.assertEqual(Main.transform_periods([]), [])
 
 
 if __name__ == '__main__':
