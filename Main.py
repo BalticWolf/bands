@@ -168,18 +168,18 @@ def transform_period(raw_period):
         :param str_year: string representing a year, on 2 or 4 digits
         :return: an integer representing a year on 4 digits
         """
-        year = int(str_year)
+        int_year = int(str_year)
 
-        if year < 100:
+        if int_year < 100:
             # 0 <= year <= 99
-            if year + 2000 <= date.today().year:
+            if int_year + 2000 <= date.today().year:
                 # 2000 <= year + 2000 <= current year
-                year += 2000
+                int_year += 2000
             else:
                 # year + 2000 > current year (
-                year += 1900
+                int_year += 1900
 
-        return year
+        return int_year
 
     # No end date: the member started and stopped activity the same year
     if len(limits) == 1:
@@ -193,7 +193,7 @@ def transform_period(raw_period):
 
         if year in ['present', 'pres', 'pres.', 'current']:
             # the member is still currently active
-            period = {'Start': int(limits[0])}
+            period = {'Start': int(limits[0]), 'End': ''}
 
         else:
             # the member is no longer active
