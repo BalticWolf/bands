@@ -31,30 +31,29 @@ class Band(object):
         return results
 
     def insert(self, session):
-        with session:
-            session.run("MERGE (b:Band {name: {name}}) "
-                        "ON MATCH SET b.formed = {formed}, b.disbanded = {disbanded}",
-                        {"name": self.name,
-                         "formed": self.formed,
-                         "disbanded": self.disbanded})
+        # with session:
+        session.run("MERGE (b:Band {name: {name}}) "
+                    "ON MATCH SET b.formed = {formed}, b.disbanded = {disbanded}",
+                    {"name": self.name,
+                     "formed": self.formed,
+                     "disbanded": self.disbanded})
 
-            for member in self.members:
-                session.run("MERGE (m:Member {"
-                            "name: {member_name}})",
-                            {"member_name": member['Name']})
+        for member in self.members:
+            person = Member(member['Name'])
+            person.insert(session)
 
-                session.run("MATCH (b: Band {name: {band_name}}), (m:Member {name: {member_name}}) "
-                            "MERGE (m)-[r:PLAYED_IN {instruments: {instruments}}]->(b)",
-                            {"member_name": member['Name'],
-                             "instruments": member['Instruments'],
-                             "band_name": self.name})
+            session.run("MATCH (b: Band {name: {band_name}}), (m:Member {name: {member_name}}) "
+                        "MERGE (m)-[r:PLAYED_IN {instruments: {instruments}}]->(b)",
+                        {"member_name": person.name,
+                         "instruments": member['Instruments'],
+                         "band_name": self.name})
 
-                # if 'Periods' in member:
-                #     session.run("MATCH (m:Member {name: {member_name}})-[r:PLAYED_IN]->(b: Band {name: {band_name}})"
-                #                 "SET r.periods = {periods}",
-                #                 {"member_name": member['Name'],
-                #                  "periods": member['Periods'],
-                #                  "band_name": self.name})
+            # if 'Periods' in member:
+            #     session.run("MATCH (m:Member {name: {member_name}})-[r:PLAYED_IN]->(b: Band {name: {band_name}})"
+            #                 "SET r.periods = {periods}",
+            #                 {"member_name": member['Name'],
+            #                  "periods": member['Periods'],
+            #                  "band_name": self.name})
 
         return "inserted band"
 
