@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from models.Member import Member
+
 
 class Band(object):
     def __init__(self, data):
