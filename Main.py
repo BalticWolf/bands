@@ -24,8 +24,6 @@ def main():
             if filename not in [
                 '.DS_Store',
                 'House of Broken Promises - Sonemic _ Rate Your Music music database.html',
-                'Ihsahn - Sonemic _ Rate Your Music music database.html',
-                'Kyle Gass - Sonemic _ Rate Your Music music database.html',
                 'Puscifer - Sonemic _ Rate Your Music music database.html',
                 'Rob Zombie - Sonemic _ Rate Your Music music database.html'
             ]:
