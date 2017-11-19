@@ -55,3 +55,7 @@ class Band(object):
                 #                  "band_name": self.name})
 
         return "inserted band"
+
+    def __repr__(self):
+        return 'name: ' + self.name + ', formed: ' + self.formed + ', disbanded: ' + self.disbanded + ', members: ' + \
+               str(self.members)
