@@ -191,7 +191,7 @@ def transform_period(raw_period):
     elif len(limits) == 2:
         year = limits[1]
 
-        if year in ['present', 'pres', 'pres.', 'current']:
+        if year in ['present', 'pres', 'pres.', 'current', '?']:
             # the member is still currently active
             period = {'Start': int(limits[0]), 'End': ''}
 
