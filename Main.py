@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+import os
 import re
 from datetime import date
 
@@ -13,19 +14,29 @@ from models.Band import Band
 
 
 def main():
-    # make_url_file('./data/rym_extract')
-    # with open('./data/urls', 'r') as f:
-    #     f.readline()
+    # neodb instance
     neo = NeoDb("bolt://127.0.0.1:7687", "neo4j", "bands")
     session = neo.get_session()
-    # for band in Band.get_all(session):
-    #     print(band["name"])
 
-    band_data = get_info_from_url('./data/pages/Tenacious D - Sonemic _ Rate Your Music music database.html')
-    print(band_data)
+    for dirname, dirnames, filenames in os.walk('./data/pages'):
+        # browse folder
+        for filename in filenames:
+            # exclude files causing errors
+            if filename not in [
+                '.DS_Store',
+                'House of Broken Promises - Sonemic _ Rate Your Music music database.html',
+                'Ihsahn - Sonemic _ Rate Your Music music database.html',
+                'Kyle Gass - Sonemic _ Rate Your Music music database.html',
+                'Puscifer - Sonemic _ Rate Your Music music database.html',
+                'Rob Zombie - Sonemic _ Rate Your Music music database.html'
+            ]:
+                path = os.path.join(dirname, filename)
+                band_data = get_info_from_url(path)
 
-    band = Band(band_data)
-    band.insert(session)
+                band = Band(band_data)
+                print(band)
+                band.insert(session)
+    session.close()
 
 
 def make_url_file(path):
