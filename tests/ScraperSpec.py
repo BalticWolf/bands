@@ -28,9 +28,11 @@ class TestPeriod(unittest.TestCase):
 
     def test05_partial_2000(self):
         """Test if year on 2 digits is correctly formed"""
-        self.assertEqual(Scraper.transform_period('2011-16'), {'Start': 2011, 'End': 2016})
+        self.assertEqual(Scraper.transform_period('2002-04'), {'Start': 2002, 'End': 2004})
 
-    # TO DO: test with 04 for 2004
+    def test05_partial_2010(self):
+        """Test if year on 2 digits is correctly formed"""
+        self.assertEqual(Scraper.transform_period('2011-16'), {'Start': 2011, 'End': 2016})
 
     def test06_complete_dates(self):
         """4-digit years on both sides"""
