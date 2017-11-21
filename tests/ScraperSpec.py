@@ -27,6 +27,12 @@ class TestPeriod(unittest.TestCase):
     def test06_complete_dates(self):
         self.assertEqual(Scraper.transform_period('1999-2004'), {'Start': 1999, 'End': 2004})
 
+    def test07_interrogation_1(self):
+        self.assertEqual(Scraper.transform_period('2005-?'), {'Start': 2005, 'End': ''})
+
+    def test08_interrogation_2(self):
+        self.assertEqual(Scraper.transform_period('?-2005'), {'Start': '', 'End': 2005})
+
 
 class TestPeriods(unittest.TestCase):
     def test00_empty(self):
