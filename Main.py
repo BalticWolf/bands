@@ -19,10 +19,7 @@ def main():
         for filename in filenames:
             # exclude files causing errors
             if filename not in [
-                '.DS_Store',
-                'House of Broken Promises - Sonemic _ Rate Your Music music database.html',
-                'Puscifer - Sonemic _ Rate Your Music music database.html',
-                'Rob Zombie - Sonemic _ Rate Your Music music database.html'
+                '.DS_Store'
             ]:
                 path = os.path.join(dirname, filename)
                 band_data = get_info_from_url(path)
