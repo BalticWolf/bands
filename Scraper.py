@@ -35,8 +35,10 @@ def get_info_from_url(link):
 
     # clean data
     for key in ['Formed', 'Disbanded']:
-        if key in band:
-            band[key] = band[key].strip(' ').strip(',')
+        if key in band and band[key] is not None:
+            band[key] = re.compile('\d{4}').search(band[key]).group()
+        else:
+            band[key] = ''
 
     # format data
     band['Members'] = to_dict_list(band['Members'])
