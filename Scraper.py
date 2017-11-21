@@ -93,45 +93,37 @@ def transform_periods(raw_periods):
 def transform_period(raw_period):
     """
     :param raw_period: string representing a period of activity of a band member
-    :return: {'Start': ... , 'End': ... } or {'Start': ... } representing the activity period
+    :return: {'Start': ... , 'End': ... } representing the activity period
     """
-    period = {}
     limits = raw_period.split('-')
 
     def format_year(str_year):
         """
-        :param str_year: string representing a year, on 2 or 4 digits
-        :return: an integer representing a year on 4 digits
+        :param str_year: string representing a year
+        :return: either an integer representing a year on 4 digits, or an empty string
         """
-        int_year = int(str_year)
+        try:
+            int_year = int(str_year.strip(','))
+            if int_year < 100:
+                # 0 <= year <= 99
+                if int_year + 2000 <= date.today().year:
+                    # 2000 <= year + 2000 <= current year
+                    int_year += 2000
+                else:
+                    # year + 2000 > current year (
+                    int_year += 1900
 
-        if int_year < 100:
-            # 0 <= year <= 99
-            if int_year + 2000 <= date.today().year:
-                # 2000 <= year + 2000 <= current year
-                int_year += 2000
-            else:
-                # year + 2000 > current year (
-                int_year += 1900
+            return int_year
 
-        return int_year
+        except ValueError:
+            return ''
 
-    # No end date: the member started and stopped activity the same year
-    if len(limits) == 1:
-        # the string is not empty
-        if len(limits[0]) > 0:
-            period = {'Start': int(limits[0]), 'End': int(limits[0])}
+    # By default, the member started and stopped activity the same year
+    start_year = format_year(limits[0])
+    period = {'Start': start_year, 'End': start_year}
 
-    # End date section specified
-    elif len(limits) == 2:
-        year = limits[1]
-
-        if year in ['present', 'pres', 'pres.', 'current', '?']:
-            # the member is still currently active
-            period = {'Start': int(limits[0]), 'End': ''}
-
-        else:
-            # the member is no longer active
-            period = {'Start': int(limits[0]), 'End': format_year(year)}
+    # Adjust when end date is specified
+    if len(limits) > 1:
+        period['End'] = format_year(limits[1])
 
     return period

@@ -7,7 +7,7 @@ class TestPeriod(unittest.TestCase):
     Tests if string representing periods are correctly transformed in dict
     """
     def test00_no_date(self):
-        self.assertEqual(Scraper.transform_period(''), {})
+        self.assertEqual(Scraper.transform_period(''), {'Start': '', 'End': ''})
 
     def test01_single_date1(self):
         self.assertEqual(Scraper.transform_period('1984'), {'Start': 1984, 'End': 1984})
