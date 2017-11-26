@@ -51,33 +51,68 @@ def to_dict_list(raw_members):
     :param raw_members: string containing all band members and their features
     :return: [{}] representing all members and their features
     """
-    keys = ['Name', 'Instruments', 'Periods']
+    # split band members seperated by commas, (except commas between brackets)
+    members = re.split(",(?![^([]*?(\)|\]))", raw_members)
 
-    # get a list of band members, ignoring the last parenthesis of raw_members
-    members = raw_members[:-1].split('), ')
-
-    # separate member name from other features
-    members = [member.replace(' (', '|') for member in members]
-
-    # separate instruments from active periods
-    members = [re.sub(', (?=\d)', '|', member, 1) for member in members]
-
-    # split member features
-    members = [member.split('|') for member in members]
-
-    for member in members:
-        # put instruments and active periods in lists
-        for i in list(range(1, len(member))):
-            member[i] = member[i].split(', ')
-
-            # transform periods in list of dict [{'start':, 'end':}]
-            if i == 2:
-                member[i] = transform_periods(member[i])
-
-    # transform members as list of dict
-    members = [dict(zip(keys, member)) for member in members]
+    # transform members into list of dict
+    members = [member_to_dict(member) for member in members]
 
     return members
+
+
+def member_to_dict(raw_member):
+    """
+    :param raw_member: string representing a band member
+    :return: {'Name': ... [, 'Instruments': ... [, 'Aka': ... [, 'Periods': ... ]]]} representing a band member
+    """
+    def get_aka(str_member):
+        """aka is found between square brackets"""
+        return re.search('(?<=\[).*?(?=\])', str_member)
+
+    def get_features(str_member):
+        """features, ie instruments and periods of activity, are found between parenthesis"""
+        raw_features = ''
+        opt_feat = re.search('(?<=\().*?(?=\))', str_member)
+
+        if opt_feat:
+            raw_features = opt_feat.group()
+
+        features = re.split(', (?=\d)', raw_features, 1)
+        instruments = features[0].strip()
+        periods = ''
+
+        if len(features) > 1:
+            periods = features[1]
+
+        return instruments, periods
+
+    def get_name(str_member):
+        name = re.sub('\[.*?\]', '', str_member)
+        name = re.sub('\(.*?\)', '', name)
+
+        return name.strip()
+
+    def get_periods(str_member):
+        return transform_periods(str_member)
+
+    if raw_member is None or len(raw_member) == 0:
+        member = None
+    else:
+        member = {'Name': get_name(raw_member)}
+
+        aka_pattern = get_aka(raw_member)
+        instr, per = get_features(raw_member)
+
+        if aka_pattern and len(aka_pattern.group()) > 0:
+            member['Aka'] = aka_pattern.group()
+
+        if instr:
+            member['Instruments'] = instr
+
+        if per:
+            member['Periods'] = transform_periods(per)
+
+    return member
 
 
 def transform_periods(raw_periods):
@@ -85,10 +120,11 @@ def transform_periods(raw_periods):
     :param raw_periods: string representing all the activity periods of a band member
     :return: [{'Start': ... , 'End': ... }, ... ] representing all the activity periods
     """
-    periods = raw_periods
+    periods = raw_periods.split(',')
     for i in range(len(periods)):
         periods[i] = transform_period(periods[i])
-
+    periods = [x for x in periods if x is not None]
+    # return none if periods is the empty list
     return periods
 
 
@@ -97,15 +133,13 @@ def transform_period(raw_period):
     :param raw_period: string representing a period of activity of a band member
     :return: {'Start': ... , 'End': ... } representing the activity period
     """
-    limits = raw_period.split('-')
-
     def format_year(str_year):
         """
         :param str_year: string representing a year
         :return: either an integer representing a year on 4 digits, or an empty string
         """
         try:
-            int_year = int(str_year.strip(','))
+            int_year = int(str_year.strip(', '))
             if int_year < 100:
                 # 0 <= year <= 99
                 if int_year + 2000 <= date.today().year:
@@ -120,12 +154,17 @@ def transform_period(raw_period):
         except ValueError:
             return ''
 
-    # By default, the member started and stopped activity the same year
-    start_year = format_year(limits[0])
-    period = {'Start': start_year, 'End': start_year}
+    if len(raw_period) == 0:
+        period = None
+    else:
+        limits = raw_period.split('-')
 
-    # Adjust when end date is specified
-    if len(limits) > 1:
-        period['End'] = format_year(limits[1])
+        # By default, the member started and stopped activity the same year
+        start_year = format_year(limits[0])
+        period = {'Start': start_year, 'End': start_year}
+
+        # Adjust when end date is specified
+        if len(limits) > 1:
+            period['End'] = format_year(limits[1])
 
     return period
