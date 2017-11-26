@@ -2,6 +2,59 @@ import unittest
 import Scraper
 
 
+class TestMember(unittest.TestCase):
+    def test_empty(self):
+        self.assertEqual(Scraper.member_to_dict(""), None)
+
+    def test_trailing_spaces(self):
+        self.assertEqual(
+            Scraper.member_to_dict('  Tomas Haake '),
+            {'Name': 'Tomas Haake'}
+        )
+
+    def test_name_only(self):
+        self.assertEqual(
+            Scraper.member_to_dict("Stephen O'Malley"),
+            {'Name': "Stephen O'Malley"}
+        )
+
+    def test_name_aka(self):
+        self.assertEqual(
+            Scraper.member_to_dict('Joey Jordison [#1]'),
+            {'Name': 'Joey Jordison', 'Aka': '#1'}
+        )
+
+    def test_name_instruments(self):
+        self.assertEqual(
+            Scraper.member_to_dict('Tomas Haake (drums)'),
+            {'Name': 'Tomas Haake', 'Instruments': 'drums'}
+        )
+
+    def test_name_aka_instruments(self):
+        self.assertEqual(
+            Scraper.member_to_dict('Joey Jordison [#1] (drums)'),
+            {'Name': 'Joey Jordison', 'Instruments': 'drums', 'Aka': '#1'}
+        )
+
+    def test_name_empty_instruments(self):
+        self.assertEqual(
+            Scraper.member_to_dict('Joey Jordison ()'),
+            {'Name': 'Joey Jordison'}
+        )
+
+    def test_name_empty_aka(self):
+        self.assertEqual(
+            Scraper.member_to_dict('Joey Jordison []'),
+            {'Name': 'Joey Jordison'}
+        )
+
+    def test_name_features(self):
+        self.assertEqual(
+            Scraper.member_to_dict('Timo (drums, 2015-present)'),
+            {'Name': 'Timo', 'Instruments': 'drums', 'Periods': [{'Start': 2015, 'End': ''}]}
+        )
+
+
 class TestPeriod(unittest.TestCase):
     """
     Tests if string representing periods are correctly transformed in dict
