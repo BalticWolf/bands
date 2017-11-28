@@ -57,6 +57,9 @@ def to_dict_list(raw_members):
     # transform members into list of dict
     members = [member_to_dict(member) for member in members]
 
+    # remove None values from list
+    members = [member for member in members if member is not None]
+
     return members
 
 
@@ -121,10 +124,12 @@ def transform_periods(raw_periods):
     :return: [{'Start': ... , 'End': ... }, ... ] representing all the activity periods
     """
     periods = raw_periods.split(',')
-    for i in range(len(periods)):
-        periods[i] = transform_period(periods[i])
-    periods = [x for x in periods if x is not None]
-    # return none if periods is the empty list
+    periods = [transform_period(period) for period in periods]
+
+    # set periods to None if it is an empty list
+    if len(periods) == 0:
+        periods = None
+
     return periods
 
 
