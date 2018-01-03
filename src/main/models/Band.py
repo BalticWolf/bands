@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from models.Member import Member
+from src.main.models.Member import Member
 
 
 class Band(object):

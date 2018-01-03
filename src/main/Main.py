@@ -4,9 +4,9 @@
 
 import os
 
-from DbConnection import NeoDb
-from models.Band import Band
-from Scraper import get_info_from_url
+from src.main.DbConnection import NeoDb
+from src.main.models.Band import Band
+from src.main.Scraper import get_info_from_url
 
 
 def main():

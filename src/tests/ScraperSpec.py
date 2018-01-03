@@ -1,5 +1,5 @@
 import unittest
-import Scraper
+from src.main import Scraper
 
 
 class TestMember(unittest.TestCase):
